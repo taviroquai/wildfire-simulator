@@ -1,0 +1,53 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.grid {
+  clear: both;
+}
+
+.row {
+  width: 100%;
+  display: block;
+  background-color: red;
+  clear: both;
+}
+
+.cell {
+  width: 3px;
+  height: 3px;
+  float: left;
+  font-size: 7px;
+}
+
+.forest-map {
+  width: 301px;
+}
+
+.topleft {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+}
+
+table td {
+  vertical-align: top;
+  height: 300px;
+}
+
+.palette-item {
+  width: 10px;
+  height: 10px;
+  margin: 4px;
+}
+
+table.colors {
+  width: 300px;
+}
+
+table.colors td {
+  vertical-align: top;
+  height: auto;
+  text-align: left;
+}
