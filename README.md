@@ -12,13 +12,15 @@ Based on the work **FlorestaSim** by Oliveira, Maria da Graça de Andrade (2005)
 4. Export simulation data
 5. Performance
 
-[[/public/screenshot.jpg|Screenshot]]
+<p align="center">
+    <img width="800" src="/public/screenshot.jpg" alt="Screenshot" />
+</p>
 
 Note: if you can contact the author, please let me know!
 
 ## Usage
 
-1. Upload a Google Maps image with 300x300 pixels (look at public/demo-forest.jpg)
+1. Upload a Google Maps image with 300x300 pixels (look at the demo forest below)
 2. Map the image reduced colors to forest cells (Map Soil Type)
 3. Click "go to simulator"
 4. Click "Reset Fire"
@@ -28,4 +30,7 @@ Note: if you can contact the author, please let me know!
 8. You can stop the simulation, change the wind direction, and restart the simulation for more interesting results
 
 ## Demo forest
-[[/public/demo-forest.jpg|Demo Forest]]
+
+<p align="center">
+    <img width="300" src="/public/demo-forest.jpg" alt="Demo forest from Google Maps images" />
+</p>
