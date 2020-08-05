@@ -14,6 +14,7 @@ Programming based on CRA (Create React App)
 4. Measure simulation time to real time
 5. Export simulation data
 6. Performance
+7. Improve UI (maybe use an UI Framework?)
 
 <p align="center">
     <img width="800" src="/public/screenshot.jpg" alt="Screenshot" />
