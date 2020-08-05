@@ -1,6 +1,7 @@
 # Wildfire Simulator
 
 Based on the work **FlorestaSim** by Oliveira, Maria da Graça de Andrade (2005) - [Propagação do Fogo e Dinâmicas Florestais](https://hdl.handle.net/10216/11652)
+Programming based on CRA (Create React App)
 
 ## Additions
 1. Wind direction - Wind direction selector by Windy API.
