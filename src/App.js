@@ -43,12 +43,14 @@ export default function App() {
   let [anosLapsed, setAnosLapsed] = useState(1);
   let [densityLapsed, setDensityLapsed] = useState(1);
   let [density, setDensity] = useState(false);
+  let [hasImage, setHasImage] = useState(false);
   let [maxColors, setMaxColors] = useState(8);
   let [boxSize, setBoxSize] = useState(16);
   let [boxPxls, setBoxPxls] = useState(2);
   let [colorDist, setColorDist] = useState('euclidean');
   let [palette, setPalette] = useState([]);
   let [colorMap, setColorMap] = useState({});
+  let [selectedColor, setSelectedColor] = useState('');
   let [wind, setWind] = useState(0);
   let canvasRef = useRef();
   let canvasRef2 = useRef();
@@ -256,7 +258,7 @@ export default function App() {
         ctx = canvasRef.current.getContext("2d");
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, ctx.canvas.width, ctx.canvas.height);
-
+        setHasImage(true);
         rebuildForestFromImage();
       });
       img.src = evt.target.result;
@@ -276,6 +278,15 @@ export default function App() {
       }
     }
     setMatrix(matrix);
+  }
+
+  function onClickReducedImage(e) {
+    const rect = canvasRef2.current.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left));
+    const y = Math.floor((e.clientY - rect.top));
+    let ctx2 = canvasRef2.current.getContext("2d");
+    let data = ctx2.getImageData(x, y, 1, 1).data;
+    setSelectedColor(data.join(','));
   }
 
   function getReducedColors(pal) {
@@ -492,7 +503,7 @@ export default function App() {
               )}
 
               <td>
-                <div className="forest-map" style={{ position: "relative" }} onClick={setFireStartOnClick.bind(this)}>
+                <div className="forest-map mousepointer" style={{ position: "relative" }} onClick={setFireStartOnClick.bind(this)}>
                   <div className="grid topleft">
                     {estados.map((i, ii) => (
                       <div className="row" key={String(ii)}>
@@ -531,21 +542,24 @@ export default function App() {
             </tr>
             <tr>
               <td>
-                 <canvas id="canvas" width="300" height="300" ref={canvasRef2}></canvas>
+                 <canvas className="mousepointer"
+                   onClick={onClickReducedImage.bind(this)} 
+                   id="canvas2" width="300" height="300" ref={canvasRef2}></canvas>
               </td>
-              <td>
-                <h5>Map Soil Type</h5>
+              <td style={{ display: hasImage ? 'table-cell' : 'none' }}>
+                <h5>Map Fuel Type</h5>
+                <small>Click on the left map to select color</small>
                 <table className="colors">
                   <tbody>
                     <tr>
                       <td></td>
-                      <td>rgba</td>
-                      <td>map</td>
+                      <td>Color</td>
+                      <td>Fuel</td>
                     </tr>
                     { palette.map((c, i) => (
                       <tr key={i}>
                         <td>
-                          <div className="palette-item" style={{ backgroundColor: `rgba(${c[0]},${c[1]},${c[2]},${c[3]})` }}></div>
+                          <div className={"palette-item" + (selectedColor === c.join(',') ? " selected" : "")} style={{ backgroundColor: `rgba(${c[0]},${c[1]},${c[2]},${c[3]})` }}></div>
                         </td>
                         <td style={{ minWidth: '140px'}}>
                           {c[0]}, {c[1]}, {c[2]}, {c[3]}
