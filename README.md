@@ -11,8 +11,9 @@ Programming based on CRA (Create React App)
 1. Improve wind factor
 2. Fuel factor
 3. Moisture factor
-4. Export simulation data
-5. Performance
+4. Measure simulation time to real time
+5. Export simulation data
+6. Performance
 
 <p align="center">
     <img width="800" src="/public/screenshot.jpg" alt="Screenshot" />
