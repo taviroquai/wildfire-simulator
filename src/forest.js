@@ -248,6 +248,80 @@ function mod(n, m) {
   return Math.floor(remain >= 0 ? remain : remain + m);
 }
 
+function calcWindFire(windprob, windfire) {
+  for (let wfxi = 0; wfxi < windfire.length; wfxi++) {
+    for (let wfyi = 0; wfyi < windfire[wfxi].length; wfyi++) {
+      windfire[wfxi][wfyi] = Math.random() < windprob[wfxi][wfyi] ? 1 : 0;
+    }
+  }
+}
+
+// Calculate windfire matrix
+function calcWindFireMatrix(wind) {
+
+  // Get wind cells
+  let winddir = mod(180 - Number(wind), 360);
+  let max = 1;
+  let midhigh = 0.5;
+  let midlow = 0.2;
+  let min = 0.01;
+  let windprob = [
+    [max, max, max], // nw, n, ne
+    [max, max, max], // w,  0, e
+    [max, max, max]  // sw, s, se
+  ];
+  let windfire = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+
+  // North
+  if (winddir <= 22.5 || winddir > 337.5) {
+    windprob = [[midhigh, max, midhigh], [midlow, max, midlow], [min, min, min]];
+    calcWindFire(windprob, windfire);
+  }
+
+  // Northwest
+  else if (winddir <= 66.5 && winddir > 22.5) { 
+    windprob = [[max, midhigh, midlow], [midhigh, max, min], [midlow, min, min]];
+    calcWindFire(windprob, windfire);
+  }
+
+  // West
+  else if (winddir <= 111.5 && winddir > 66.5) { 
+    windprob = [[midhigh, midlow, min], [max, max, min], [midhigh, midlow, min]];
+    calcWindFire(windprob, windfire);
+  }
+
+  // Southwest
+  else if (winddir <= 156.5 && winddir > 111.5) { 
+    windprob = [[min, min, min], [midhigh, max, min], [max, midhigh, midlow]];
+    calcWindFire(windprob, windfire);
+  }
+
+  // South
+  else if (winddir <= 201.5 && winddir > 156.5) {
+    windprob = [[min, min, min], [midlow, max, midlow], [midhigh, max, midhigh]];
+    calcWindFire(windprob, windfire);
+  }
+
+  // Southest
+  else if (winddir <= 246.5 && winddir > 201.5) {
+    windprob = [[min, min, min], [min, max, midlow], [midlow, midhigh, max]];
+    calcWindFire(windprob, windfire);
+  }
+
+  // East
+  else if (winddir <= 291.5 && winddir > 246.5) {
+    windprob = [[min, midlow, midhigh], [min, max, max], [min, midlow, midhigh]];
+    calcWindFire(windprob, windfire);
+  }
+
+  // Northest
+  else {
+    windprob = [[min, midhigh, max], [min, max, midhigh], [min, min, midlow]];
+    calcWindFire(windprob, windfire);
+  }
+  return windfire;
+}
+
 //PROPAGAÇÃO DO FOGO
 export function fire(deps, onStats, onEnd) {
   let c = 0,
@@ -259,21 +333,8 @@ export function fire(deps, onStats, onEnd) {
     cont2 = 0,
     cont3 = 0;
   let { p, q, matrix, aux, mz, setMatrix, wind } = deps;
-
-  // Get wind cells
-  let wnw = 0, wn = 0, wne = 0, ww = 0, we = 0, wsw = 0, ws = 0, wse = 0;
-  let winddir = mod(180 - Number(wind), 360);
-  let wo1 = Math.random(); // Non wind direction probability 1
-  let wo2 = Math.random(); // Non wind direction probability 1
-  let wpl = 0.8; // Probability limit
-  if (winddir <= 22.5 || winddir > 337.5) { wn = 1; wne = wo1 > wpl ? 1 : 0; wnw = wo2 > wpl ? 1 : 0; }
-  else if (winddir <= 66.5 && winddir > 22.5) { wnw = 1; wn = wo1 > wpl ? 1 : 0; ww = wo2 > wpl ? 1 : 0; }
-  else if (winddir <= 111.5 && winddir > 66.5) { ww = 1; wnw = wo1 > wpl ? 1 : 0; wsw = wo2 > wpl ? 1 : 0; }
-  else if (winddir <= 156.5 && winddir > 111.5) { wsw = 1; ww = wo1 > wpl ? 1 : 0; ws = wo2 > wpl ? 1 : 0; }
-  else if (winddir <= 201.5 && winddir > 156.5) { ws = 1; wsw = wo1 > wpl ? 1 : 0; wse = wo2 > wpl ? 1 : 0; }
-  else if (winddir <= 246.5 && winddir > 201.5) { wse = 1; ws = wo1 > wpl ? 1 : 0; we = wo2 > wpl ? 1 : 0; }
-  else if (winddir <= 291.5 && winddir > 246.5) { we = 1; wse = wo1 > wpl ? 1 : 0; wne = wo2 > wpl ? 1 : 0; }
-  else { wne = 1; we = wo1 > wpl ? 1 : 0; wn = wo2 > wpl ? 1 : 0; }
+  let windfire = calcWindFireMatrix(wind);
+  console.log(windfire);
 
   //Calcular o número de vizinhos a arder (estado 1) para cada elemento da matrix
   for (X = 1; X < size - 1; X++) {
@@ -298,15 +359,15 @@ export function fire(deps, onStats, onEnd) {
       */
 
       // Vizinhança de 8 vizinhos + direção do vento
-      if (matrix[Y - 1][X - 1] === 1 && wse) c = c + 1;
-      if (matrix[Y - 1][X] === 1 && ws) c = c + 1;
-      if (matrix[Y - 1][X + 1] === 1 && wsw) c = c + 1;
-      if (matrix[Y][X - 1] === 1 && we) c = c + 1;
+      if (matrix[Y - 1][X - 1] === 1 && windfire[2][2]) c = c + 1;
+      if (matrix[Y - 1][X] === 1 && windfire[2][1]) c = c + 1;
+      if (matrix[Y - 1][X + 1] === 1 && windfire[2][0]) c = c + 1;
+      if (matrix[Y][X - 1] === 1 && windfire[1][2]) c = c + 1;
       //if (matrix[Y][X] === 1) c = c + 1; // Own cell
-      if (matrix[Y][X + 1] === 1 && ww) c = c + 1;
-      if (matrix[Y + 1][X - 1] === 1 && wne) c = c + 1;
-      if (matrix[Y + 1][X] === 1 && wn) c = c + 1;
-      if (matrix[Y + 1][X + 1] === 1 && wnw) c = c + 1;
+      if (matrix[Y][X + 1] === 1 && windfire[1][0]) c = c + 1;
+      if (matrix[Y + 1][X - 1] === 1 && windfire[0][2]) c = c + 1;
+      if (matrix[Y + 1][X] === 1 && windfire[0][1]) c = c + 1;
+      if (matrix[Y + 1][X + 1] === 1 && windfire[0][0]) c = c + 1;
       aux[Y][X] = c;
     }
   }
